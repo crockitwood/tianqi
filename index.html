@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>天气 Weather</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css?v=2" />
+</head>
+<body>
+
+<!-- 动态背景层 -->
+<div class="bg-layer" id="bgLayer">
+  <div class="bg-gradient" id="bgGradient"></div>
+  <div class="bg-noise"></div>
+  <div class="bg-particles" id="bgParticles"></div>
+</div>
+
+<div class="app">
+
+  <!-- 顶部搜索栏 -->
+  <header class="top-bar">
+    <div class="logo">
+      <span class="logo-icon">◐</span>
+      <span class="logo-text">天气</span>
+    </div>
+    <div class="search-wrap">
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="cityInput" placeholder="输入城市名..." autocomplete="off" />
+        <div class="search-suggestions" id="suggestions"></div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" id="geoBtn" title="定位当前位置">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- 主天气卡 -->
+  <section class="hero" id="heroSection">
+    <div class="hero-city" id="heroCity">北京</div>
+    <div class="hero-region" id="heroRegion">加载中...</div>
+
+    <div class="hero-main">
+      <div class="hero-temp">
+        <span class="temp-num" id="heroTemp">--</span>
+        <span class="temp-unit">°C</span>
+      </div>
+      <div class="hero-condition">
+        <div class="hero-icon" id="heroIcon">☀</div>
+        <div class="hero-text" id="heroText">--</div>
+        <div class="hero-feels">体感 <span id="heroFeels">--</span>°</div>
+      </div>
+    </div>
+
+    <div class="hero-meta">
+      <div class="meta-item">
+        <span class="meta-label">更新时间</span>
+        <span class="meta-value" id="heroTime">--:--</span>
+      </div>
+      <div class="meta-divider"></div>
+      <div class="meta-item">
+        <span class="meta-label">湿度</span>
+        <span class="meta-value" id="heroHumidity">--%</span>
+      </div>
+      <div class="meta-divider"></div>
+      <div class="meta-item">
+        <span class="meta-label">风向</span>
+        <span class="meta-value" id="heroWindDir">--</span>
+      </div>
+      <div class="meta-divider"></div>
+      <div class="meta-item">
+        <span class="meta-label">风速</span>
+        <span class="meta-value" id="heroWindSpeed">-- m/s</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 逐小时预报 -->
+  <section class="panel glass">
+    <div class="panel-header">
+      <h3>24 小时</h3>
+      <span class="panel-sub">HOURLY</span>
+    </div>
+    <div class="hourly-scroll" id="hourlyScroll"></div>
+  </section>
+
+  <!-- 每日预报 -->
+  <section class="panel glass">
+    <div class="panel-header">
+      <h3>7 天预报</h3>
+      <span class="panel-sub">DAILY</span>
+    </div>
+    <div class="daily-list" id="dailyList"></div>
+  </section>
+
+  <!-- 详细数据网格 -->
+  <section class="detail-grid">
+    <div class="detail-card glass">
+      <div class="dc-icon">💨</div>
+      <div class="dc-title">风速</div>
+      <div class="dc-value" id="dWind">--</div>
+      <div class="dc-sub" id="dWindScale">-- 级</div>
+    </div>
+    <div class="detail-card glass">
+      <div class="dc-icon">💧</div>
+      <div class="dc-title">降水</div>
+      <div class="dc-value" id="dPrecip">-- mm</div>
+      <div class="dc-sub" id="dPrecipType">--</div>
+    </div>
+    <div class="detail-card glass">
+      <div class="dc-icon">👁</div>
+      <div class="dc-title">能见度</div>
+      <div class="dc-value" id="dVis">-- km</div>
+      <div class="dc-sub">清晰度</div>
+    </div>
+    <div class="detail-card glass">
+      <div class="dc-icon">🔆</div>
+      <div class="dc-title">紫外线</div>
+      <div class="dc-value" id="dUV">--</div>
+      <div class="dc-sub">紫外线指数</div>
+    </div>
+    <div class="detail-card glass">
+      <div class="dc-icon">☁</div>
+      <div class="dc-title">云量</div>
+      <div class="dc-value" id="dCloud">--%</div>
+      <div class="dc-sub">天空覆盖</div>
+    </div>
+    <div class="detail-card glass">
+      <div class="dc-icon">🌡</div>
+      <div class="dc-title">气压</div>
+      <div class="dc-value" id="dPressure">-- hPa</div>
+      <div class="dc-sub">大气压力</div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span>数据来源：和风天气 QWeather</span>
+  </footer>
+
+</div>
+
+<!-- 加载遮罩 -->
+<div class="loader" id="loader">
+  <div class="loader-ring"></div>
+  <div class="loader-text">加载天气数据</div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="script.js?v=5"></script>
+</body>
+</html>
